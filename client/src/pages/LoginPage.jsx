@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import API from '../utils/axios';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -42,3 +43,19 @@ export default function LoginPage() {
     </div>
   );
 }
+// const handleLogin = async (e) => {
+//   e.preventDefault();
+//   setError('');
+
+//   try {
+//     const res = await API.post('/auth/login', { email, password }); // ✅ res is declared here
+
+//     // ✅ Store JWT + email
+//     localStorage.setItem('token', res.data.token);
+//     localStorage.setItem('userEmail', res.data.user.email);
+
+//     navigate('/dashboard');
+//   } catch (err) {
+//     setError(err.response?.data?.msg || 'Login failed');
+//   }
+// };
