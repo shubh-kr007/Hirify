@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import API from '../utils/axios'; // reuse the axios instance
 
 export default function Dashboard() {
   const [company, setCompany] = useState('');
@@ -6,11 +7,32 @@ export default function Dashboard() {
   const [status, setStatus] = useState('applied');
   const [deadline, setDeadline] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({ company, role, status, deadline });
-    // 📥 Later: Send to backend here
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const token = localStorage.getItem('token');
+    const res = await API.post(
+      '/jobs',
+      { company, role, status, deadline },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    console.log('✅ Job Added:', res.data);
+
+    // 🧹 Clear form after successful submit
+    setCompany('');
+    setRole('');
+    setStatus('applied');
+    setDeadline('');
+  } catch (err) {
+    console.error('❌ Failed to add job:', err.response?.data?.msg || err.message);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
