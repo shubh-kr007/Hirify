@@ -5,25 +5,28 @@ import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth.js';
 import jobRoutes from './routes/jobs.js';
+import aiRoutes from './routes/ai.js';
 
 dotenv.config();
 
+// ✅ Initialize Express before using it
 const app = express();
 
-// Middlewares
+// ✅ Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// ✅ Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/api/ai', aiRoutes); // ✅ now properly placed
 
-// Optional root route for health check
+// ✅ Optional health check
 app.get('/', (req, res) => {
   res.send('🎉 Backend API is running');
 });
 
-// Connect DB and start server
+// ✅ Connect DB and Launch
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     app.listen(5000, () =>

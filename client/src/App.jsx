@@ -3,6 +3,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './utils/PrivateRoute';
+import ResumeAI from './pages/ResumeAI';
+
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
           </PrivateRoute>
         }
       />
+      <Route path="/resume-ai" element={<ResumeAI />} />
     </Routes>
+    
   );
 }
