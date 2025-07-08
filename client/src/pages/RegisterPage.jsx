@@ -3,20 +3,16 @@ import { useNavigate, Link } from 'react-router-dom';
 import API from '../utils/axios';
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
-
-  // 🧠 ✅ Keep all useState hooks at the top
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     try {
       const res = await API.post('/auth/register', { email, password });
 
-      // Save JWT and redirect
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('userEmail', res.data.user.email);
       navigate('/dashboard');
@@ -42,7 +38,6 @@ export default function RegisterPage() {
             className="w-full p-3 border border-gray-300 rounded"
             required
           />
-
           <input
             type="password"
             placeholder="Password"
@@ -51,7 +46,6 @@ export default function RegisterPage() {
             className="w-full p-3 border border-gray-300 rounded"
             required
           />
-
           <button
             type="submit"
             className="w-full bg-green-600 text-white p-3 rounded hover:bg-green-700 transition"
@@ -70,7 +64,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-// const res = await API.post('/auth/register', { email, password });
-// localStorage.setItem('token', res.data.token);
-// localStorage.setItem('userEmail', res.data.user.email);
-// navigate('/dashboard');

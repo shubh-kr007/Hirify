@@ -5,39 +5,44 @@ import User from '../models/User.js';
 
 const router = express.Router();
 
-// @route   POST /api/auth/register
-router.post('/register', async (req, res) => {
+// 🔐 LOGIN
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ msg: 'Invalid email or password' });
 
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ msg: 'User already exists' });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: 'Invalid email or password' });
 
-    const hash = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, password: hash });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: newUser._id, email: newUser.email } });
+    res.json({ token, user: { id: user._id, email: user.email } });
   } catch (err) {
-    res.status(500).json({ msg: 'Server error', error: err.message });
+    console.error('❌ Login error:', err.message);
+    res.status(500).json({ msg: 'Server error during login' });
   }
 });
 
-// @route   POST /api/auth/login
-router.post('/login', async (req, res) => {
+// 🔐 REGISTER
+router.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ msg: 'User already exists' });
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
+    const hashedPwd = await bcrypt.hash(password, 10);
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
+    const newUser = await User.create({ email, password: hashedPwd });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, email: user.email } });
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({ token, user: { id: newUser._id, email: newUser.email } });
   } catch (err) {
-    res.status(500).json({ msg: 'Server error', error: err.message });
+    console.error('❌ Register error:', err.message);
+    res.status(500).json({ msg: 'Server error during registration' });
   }
 });
 
