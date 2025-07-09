@@ -1,5 +1,10 @@
 {
   "dependencies": {
+    "@clerk/clerk-react": "^5.33.0",
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
+    "clsx": "^2.1.1",
+    "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^7.6.3"
   }
 }

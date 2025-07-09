@@ -36,3 +36,4 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err);
   });
+  import './utils/emailReminder.js'; // ☝️ Auto-runs the cron job
