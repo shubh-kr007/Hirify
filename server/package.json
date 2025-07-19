@@ -7,6 +7,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "@sendgrid/mail": "^8.1.5",
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
@@ -14,6 +15,7 @@
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.9.1",
     "mongoose": "^8.16.1",
     "multer": "^2.0.1",
     "node-cron": "^4.2.0",

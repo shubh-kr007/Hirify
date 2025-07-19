@@ -1,19 +1,30 @@
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '@clerk/clerk-sdk-node';
 
-const auth = (req, res, next) => {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res.status(401).json({ msg: 'No token, access denied' });
-  }
-
+const auth = async (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // decoded = { id: user._id }
+    const authHeader = req.header('Authorization');
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+    
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Verify Clerk token
+    const payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY
+    });
+    
+    // Extract user ID from Clerk payload
+    req.userId = payload.sub; // Clerk uses 'sub' for user ID
+    
+    // Debug log
+    console.log('Authenticated user:', req.userId);
+    
     next();
-  } catch (err) {
-    console.error('❌ Invalid Token:', err.message);
-    res.status(401).json({ msg: 'Invalid token' });
+  } catch (error) {
+    console.error('Auth error:', error);
+    res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
 

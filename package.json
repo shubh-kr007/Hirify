@@ -4,6 +4,9 @@
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "clsx": "^2.1.1",
+    "express-validator": "^7.2.1",
+    "mammoth": "^1.9.1",
+    "react-hot-toast": "^2.5.2",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^7.6.3"
   }
