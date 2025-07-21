@@ -18,7 +18,7 @@ const jobValidation = [
   body('role').trim().notEmpty().withMessage('Role is required'),
   body('status').optional().isIn(['applied', 'interview', 'offer', 'rejected', 'withdrawn']),
   body('deadline').optional().isISO8601().toDate(),
-  body('applicationUrl').optional().isURL()
+  body('applicationUrl').optional({ checkFalsy: true }).isURL().withMessage('Please enter a valid URL')
 ];
 
 // All routes require authentication
