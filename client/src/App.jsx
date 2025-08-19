@@ -111,6 +111,7 @@ import JobDetails from './pages/JobDetails';
 import LandingPage from './pages/LandingPage';
 import { Rings } from 'react-loader-spinner';
 
+
 /**
  * A component to handle public routes.
  * If the user is signed in, it redirects them to the dashboard.
