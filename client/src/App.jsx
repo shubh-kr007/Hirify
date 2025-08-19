@@ -109,7 +109,7 @@ import ResumeAssistant from './pages/ResumeAssistant';
 import Profile from './pages/Profile';
 import JobDetails from './pages/JobDetails';
 import LandingPage from './pages/LandingPage';
-import { Rings } from 'react-loader-spinner';
+import { RingLoader } from "react-spinners";
 
 
 /**
@@ -123,7 +123,7 @@ function PublicRoute() {
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
-        <Rings color="#3b82f6" height={80} width={80} />
+        <RingLoader size={80} />
       </div>
     );
   }
@@ -142,7 +142,7 @@ function ProtectedRoute() {
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
-        <Rings color="#3b82f6" height={80} width={80} />
+        <RingLoader size={80} />
       </div>
     );
   }
