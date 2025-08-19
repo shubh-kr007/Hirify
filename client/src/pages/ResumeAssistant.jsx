@@ -5,7 +5,14 @@ import {
   TrashIcon,
   DocumentTextIcon,
   CheckCircleIcon,
-  CloudArrowUpIcon
+  CloudArrowUpIcon,
+  // Viewer controls
+  MagnifyingGlassPlusIcon,
+  MagnifyingGlassMinusIcon,
+  ArrowsPointingOutIcon,
+  ArrowsPointingInIcon,
+  ClipboardIcon,
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline'
 import { useApi } from '../utils/api'
 import { Rings } from 'react-loader-spinner'
@@ -19,6 +26,36 @@ export default function ResumeAssistant() {
   const [selectedFile, setSelectedFile] = useState(null)
   const [dragActive, setDragActive] = useState(false)
   const api = useApi()
+
+  const [viewerZoom, setViewerZoom] = useState(100) // percentage
+  const [wrapText, setWrapText] = useState(true)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const zoomIn = () => setViewerZoom((z) => Math.min(160, z + 10))
+  const zoomOut = () => setViewerZoom((z) => Math.max(80, z - 10))
+  const resetZoom = () => setViewerZoom(100)
+
+  const copyContent = async () => {
+    try {
+      await navigator.clipboard.writeText(resume?.content || '')
+      toast.success('Content copied to clipboard')
+    } catch {
+      toast.error('Failed to copy')
+    }
+  }
+
+  const downloadContent = () => {
+    if (!resume?.content) return
+    const blob = new Blob([resume.content], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = (resume.fileName?.replace(/\.\w+$/, '') || 'resume') + '.txt'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  }
 
   useEffect(() => {
     loadResume()
@@ -365,30 +402,194 @@ export default function ResumeAssistant() {
 
       {/* Resume Content Preview */}
       {resume && (
-        <div className="bg-white shadow-soft rounded-2xl border border-gray-100 p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center shadow-lg mr-3">
-                <DocumentTextIcon className="h-6 w-6 text-white" />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900">Resume Content Preview</h2>
-            </div>
-            <div className="flex items-center text-sm text-gray-500">
+  <>
+    <div className="bg-white shadow-soft rounded-2xl border border-gray-100 overflow-hidden">
+      {/* Header + Toolbar */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center">
+          <div className="w-10 h-10 bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center shadow-lg mr-3">
+            <DocumentTextIcon className="h-6 w-6 text-white" />
+          </div>
+          <div className="flex flex-col">
+            <h2 className="text-xl font-semibold text-gray-900">Resume Preview</h2>
+            <div className="flex items-center text-xs text-gray-500">
               <DocumentTextIcon className="h-4 w-4 mr-1" />
-              <span>{resume.fileName}</span>
+              <span className="truncate max-w-[220px] sm:max-w-[320px]">{resume.fileName}</span>
             </div>
-          </div>
-          <div className="bg-gray-50 rounded-xl p-6 max-h-96 overflow-y-auto border border-gray-200">
-            <pre className="text-sm text-gray-700 whitespace-pre-wrap font-mono leading-relaxed">
-              {resume.content}
-            </pre>
-          </div>
-          <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-            <span>Uploaded: {new Date(resume.updatedAt).toLocaleDateString()}</span>
-            <span>{Math.round(resume.content.length / 1000)}k characters</span>
           </div>
         </div>
-      )}
+
+        {/* Controls */}
+        <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center rounded-lg border border-gray-200 overflow-hidden">
+            <button
+              onClick={zoomOut}
+              className="p-2 hover:bg-gray-50 text-gray-600"
+              title="Zoom out"
+            >
+              <MagnifyingGlassMinusIcon className="h-5 w-5" />
+            </button>
+            <button
+              onClick={resetZoom}
+              className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-50 border-x border-gray-200"
+              title="Reset zoom"
+            >
+              {viewerZoom}%
+            </button>
+            <button
+              onClick={zoomIn}
+              className="p-2 hover:bg-gray-50 text-gray-600"
+              title="Zoom in"
+            >
+              <MagnifyingGlassPlusIcon className="h-5 w-5" />
+            </button>
+          </div>
+
+          <button
+            onClick={() => setWrapText((w) => !w)}
+            className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors ${
+              wrapText
+                ? 'bg-gray-900 text-white border-gray-900'
+                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+            }`}
+            title="Toggle line wrap"
+          >
+            {wrapText ? 'Wrap On' : 'Wrap Off'}
+          </button>
+
+          <button
+            onClick={copyContent}
+            className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+            title="Copy content"
+          >
+            <ClipboardIcon className="h-5 w-5" />
+          </button>
+
+          <button
+            onClick={downloadContent}
+            className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+            title="Download as .txt"
+          >
+            <ArrowDownTrayIcon className="h-5 w-5" />
+          </button>
+
+          <button
+            onClick={() => setIsFullscreen(true)}
+            className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+            title="Fullscreen"
+          >
+            <ArrowsPointingOutIcon className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="relative bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-h-[28rem] overflow-y-auto px-6 py-6 custom-scrollbar">
+          <div className="mx-auto w-full max-w-3xl bg-white rounded-xl shadow-sm ring-1 ring-gray-200">
+            <div
+              className={`p-6 font-sans antialiased leading-7 text-gray-800 ${
+                wrapText ? 'whitespace-pre-wrap break-words' : 'whitespace-pre'
+              }`}
+              style={{ fontSize: `${(viewerZoom / 100) * 16}px` }}
+            >
+              {resume.content}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between px-6 py-3 text-sm text-gray-500 border-t border-gray-200">
+        <span>Uploaded: {new Date(resume.updatedAt).toLocaleDateString()}</span>
+        <span>{Math.round((resume.content || '').length / 1000)}k characters</span>
+      </div>
+    </div>
+
+    {/* Fullscreen Overlay */}
+    {isFullscreen && (
+      <div className="fixed inset-0 z-[60] bg-gray-900/70 backdrop-blur-sm p-4 md:p-8" onClick={() => setIsFullscreen(false)}>
+        <div
+          className="mx-auto max-w-5xl h-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="bg-white shadow-2xl rounded-2xl border border-gray-200 h-full flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-3 border-b">
+              <div className="flex items-center gap-2">
+                <DocumentTextIcon className="h-5 w-5 text-gray-700" />
+                <span className="text-sm font-medium text-gray-800">Resume Preview</span>
+                <span className="ml-2 text-xs text-gray-500 truncate max-w-[240px]">
+                  {resume.fileName}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={zoomOut}
+                  className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  title="Zoom out"
+                >
+                  <MagnifyingGlassMinusIcon className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={resetZoom}
+                  className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded"
+                  title="Reset zoom"
+                >
+                  {viewerZoom}%
+                </button>
+                <button
+                  onClick={zoomIn}
+                  className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  title="Zoom in"
+                >
+                  <MagnifyingGlassPlusIcon className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setWrapText((w) => !w)}
+                  className={`px-3 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                    wrapText
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                  }`}
+                  title="Toggle line wrap"
+                >
+                  {wrapText ? 'Wrap On' : 'Wrap Off'}
+                </button>
+                <button
+                  onClick={copyContent}
+                  className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  title="Copy content"
+                >
+                  <ClipboardIcon className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setIsFullscreen(false)}
+                  className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50"
+                  title="Exit fullscreen"
+                >
+                  <ArrowsPointingInIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white p-5 custom-scrollbar">
+              <div className="mx-auto w-full max-w-4xl bg-white rounded-xl shadow-sm ring-1 ring-gray-200">
+                <div
+                  className={`p-8 font-sans antialiased leading-7 text-gray-800 ${
+                    wrapText ? 'whitespace-pre-wrap break-words' : 'whitespace-pre'
+                  }`}
+                  style={{ fontSize: `${(viewerZoom / 100) * 18}px` }}
+                >
+                  {resume.content}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
+)}
     </div>
   )
 }

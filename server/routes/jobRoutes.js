@@ -17,7 +17,7 @@ const jobValidation = [
   body('companyName').trim().notEmpty().withMessage('Company name is required'),
   body('role').trim().notEmpty().withMessage('Role is required'),
   body('status').optional().isIn(['applied', 'interview', 'offer', 'rejected', 'withdrawn']),
-  body('deadline').optional().isISO8601().toDate(),
+  body('deadline').optional({ checkFalsy: true }).isISO8601().toDate(),
   body('applicationUrl').optional({ checkFalsy: true }).isURL().withMessage('Please enter a valid URL')
 ];
 
