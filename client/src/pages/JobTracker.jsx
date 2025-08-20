@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from 'react'
 import { Dialog, Transition, Listbox } from '@headlessui/react'
 import { PlusIcon, PencilIcon, TrashIcon, ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { useApi } from '../utils/api'
-import { Rings } from 'react-loader-spinner'
+import { ClipLoader } from 'react-spinners'
 import clsx from 'clsx'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -113,7 +113,7 @@ export default function JobTracker() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Rings color="#3b82f6" height={80} width={80} />
+        <ClipLoader color="#0ea5e9" size={80} />
       </div>
     )
   }

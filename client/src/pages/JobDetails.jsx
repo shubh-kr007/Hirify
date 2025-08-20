@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ArrowLeftIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { useApi } from '../utils/api'
-import { Rings } from 'react-loader-spinner'
+import { ClipLoader } from 'react-spinners'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function JobDetails() {
@@ -68,7 +68,7 @@ export default function JobDetails() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Rings color="#3b82f6" height={80} width={80} />
+        <ClipLoader color="#0ea5e9" size={80} />
       </div>
     )
   }
@@ -236,7 +236,7 @@ export default function JobDetails() {
         <div className="border-t border-gray-200">
           {analyzing ? (
             <div className="flex justify-center py-8">
-              <Rings color="#3b82f6" height={60} width={60} />
+              <ClipLoader color="#0ea5e9" size={60} />
             </div>
           ) : analysis ? (
             <div className="px-4 py-5 sm:px-6 space-y-6">

@@ -15,7 +15,7 @@ import {
   ArrowDownTrayIcon
 } from '@heroicons/react/24/outline'
 import { useApi } from '../utils/api'
-import { Rings } from 'react-loader-spinner'
+import { ClipLoader } from 'react-spinners'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function ResumeAssistant() {
@@ -163,7 +163,7 @@ export default function ResumeAssistant() {
   if (loading && !resume) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Rings color="#0ea5e9" height={80} width={80} />
+        <ClipLoader color="#0ea5e9" size={80} />
       </div>
     )
   }
@@ -353,7 +353,7 @@ export default function ResumeAssistant() {
             </div>
           ) : loadingSuggestions ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <Rings color="#7c3aed" height={60} width={60} />
+              <ClipLoader color="#7c3aed" size={60} />
               <p className="mt-4 text-sm text-gray-600 animate-pulse">Analyzing your resume with AI...</p>
             </div>
           ) : suggestions.length > 0 ? (

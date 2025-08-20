@@ -14,7 +14,7 @@ import {
   CalendarDaysIcon,
   EyeIcon
 } from '@heroicons/react/24/outline'
-import { Rings } from 'react-loader-spinner'
+import { ClipLoader } from 'react-spinners'
 import { useUser } from '@clerk/clerk-react'
 
 export default function Dashboard() {
@@ -76,7 +76,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Rings color="#0ea5e9" height={80} width={80} />
+        <ClipLoader color="#0ea5e9" size={80} />
       </div>
     )
   }
